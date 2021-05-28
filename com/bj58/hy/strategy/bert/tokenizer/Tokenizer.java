@@ -1,17 +1,18 @@
-package bert;
+package com.bj58.hy.strategy.bert.tokenizer;
 
 import java.io.*;
 import java.util.*;
 
-public class Preprocess {
+public class Tokenizer {
 
     private Map<String, Integer> vocab;
     private FullTokenizer fullTokenizer;
-    private final static int maxSeqLength = 64;  // 放到配置文件中去读
+    private Integer maxSeqLength;
 
-    public Preprocess(){
-        this.vocab = load("/Users/zhudongchang/WorkData/project/huangye_project/58huangye/huangye/branches/web/bert_tokenization_for_java/vocab.txt");
+    public Tokenizer(String path,int maxSeqLength){
+        this.vocab = load(path);
         this.fullTokenizer = new FullTokenizer(this.vocab);
+        this.maxSeqLength=maxSeqLength;
     }
 
     private Map<String, Integer> load(String filePath){
@@ -36,24 +37,22 @@ public class Preprocess {
 
     public static void main(String[] args){
 
-        Preprocess pp = new Preprocess();
-        String query = "您也可以留一下邮箱的，QQ邮箱也是可以的。？";
-        String doc = "求七公主漫画1-52全集给我发一下谢谢";
+        String path="/Users/zhudongchang/WorkData/project/huangye_project/58huangye/huangye/branches/web/bert_tokenization_for_java/vocab.txt";
+        Tokenizer tokenizer = new Tokenizer(path,100);
+        String query = "您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？";
+//        String doc = "求七公主漫画1-52全集给我发一下谢谢";
+//
+//        List<String> docs = new ArrayList<>();
+//        docs.add(doc);
+//        docs.add(doc);
+//
+//        List<TokenEntity> examples = pp.preProcess(query, docs);
+//
+//        System.out.println("input_ids " + examples.get(0).getInputIds());
+//        System.out.println("input_mask " + examples.get(0).getInputMask());
+//        System.out.println("segment_ids " + examples.get(0).getSegmentIds());
 
-        List<String> docs = new ArrayList<String>();
-        docs.add(doc);
-        docs.add(doc);
-
-        List<Example> examples = pp.preProcess(query, docs);
-
-        System.out.println("input_ids " + examples.get(0).getInputIds());
-        System.out.println("input_mask " + examples.get(0).getInputMask());
-        System.out.println("segment_ids " + examples.get(0).getSegmentIds());
-
-        query = pp.full2HalfChange(query).toLowerCase();
-        List<String> tokensQuery = pp.fullTokenizer.tokenize(query);
-
-        Example e = pp.getExampleSingle(tokensQuery);
+        TokenEntity e = tokenizer.encode(query);
         System.out.println("input_ids " + e.getInputIds());
         System.out.println("input_mask " + e.getInputMask());
         System.out.println("segment_ids " + e.getSegmentIds());
@@ -110,23 +109,29 @@ public class Preprocess {
         return outStrBuf.toString();
     }
 
-    public List<Example> preProcess(String query, List<String> docs){
+    public TokenEntity encode(String query){
+        query = full2HalfChange(query).toLowerCase();
+        List<String> tokensQuery = fullTokenizer.tokenize(query);
+        return getExampleSingle(tokensQuery);
+    }
+
+    public List<TokenEntity> preProcess(String query, List<String> docs){
         String cleanQuery = full2HalfChange(query).toLowerCase();  //全角转半角+大写转小写
 
         List<String> tokensQuery = this.fullTokenizer.tokenize(cleanQuery);
 
-        List<Example> examples = new ArrayList<Example>();
+        List<TokenEntity> examples = new ArrayList<TokenEntity>();
         for(String doc : docs){
             String cleanDoc = full2HalfChange(doc).toLowerCase();
             List<String> tokensDoc = this.fullTokenizer.tokenize(cleanDoc);
-            Example e = getExamplePair(tokensQuery, tokensDoc);
+            TokenEntity e = getExamplePair(tokensQuery, tokensDoc);
             examples.add(e);
         }
         return examples;
     }
 
     // 句对映射id
-    private Example getExamplePair(List<String> tokensQuery, List<String> tokensDoc){
+    private TokenEntity getExamplePair(List<String> tokensQuery, List<String> tokensDoc){
         while(true){
             int totalLength = tokensQuery.size() + tokensDoc.size();
             if(totalLength <= maxSeqLength - 3){
@@ -170,12 +175,12 @@ public class Preprocess {
             segmentIds.add(0);
         }
 
-        return new Example(inputIds, inputMask, segmentIds);
+        return new TokenEntity(inputIds, inputMask, segmentIds);
 
     }
 
     // 单句映射id
-    private Example getExampleSingle(List<String> tokensQuery){
+    private TokenEntity getExampleSingle(List<String> tokensQuery){
         while(true){
             int totalLength = tokensQuery.size();
             if(totalLength <= maxSeqLength - 2){
@@ -212,45 +217,9 @@ public class Preprocess {
             segmentIds.add(0);
         }
 
-        return new Example(inputIds, inputMask, segmentIds);
+        return new TokenEntity(inputIds, inputMask, segmentIds);
 
     }
 
 }
 
-class Example{
-    private List<Integer> inputIds;
-    private List<Integer> inputMask;
-    private List<Integer> segmentIds;
-
-    public Example(List<Integer> inputIds, List<Integer> inputMask, List<Integer> segmentIds){
-        this.inputIds = inputIds;
-        this.inputMask = inputMask;
-        this.segmentIds = segmentIds;
-
-    }
-
-    public List<Integer> getInputIds() {
-        return inputIds;
-    }
-
-    public List<Integer> getInputMask() {
-        return inputMask;
-    }
-
-    public void setInputMask(List<Integer> inputMask) {
-        this.inputMask = inputMask;
-    }
-
-    public List<Integer> getSegmentIds() {
-        return segmentIds;
-    }
-
-    public void setSegmentIds(List<Integer> segmentIds) {
-        this.segmentIds = segmentIds;
-    }
-
-    public void setInputIds(List<Integer> inputIds) {
-        this.inputIds = inputIds;
-    }
-}

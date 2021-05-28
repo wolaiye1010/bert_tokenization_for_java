@@ -1,4 +1,4 @@
-package bert;
+package com.bj58.hy.strategy.bert.tokenizer;
 
 import java.util.ArrayList;
 import java.util.List;
