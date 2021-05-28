@@ -15,6 +15,31 @@ public class Tokenizer {
         this.maxSeqLength=maxSeqLength;
     }
 
+
+    public Tokenizer(int maxSeqLength,String content){
+        this.vocab = loadContent(content);
+        this.fullTokenizer = new FullTokenizer(this.vocab);
+        this.maxSeqLength=maxSeqLength;
+    }
+
+    private Map<String, Integer> loadContent(String content){
+        Map<String, Integer> map = new HashMap<String, Integer>();
+
+        /* 读取数据 */
+        try {
+            int index = 0;
+            String token = null;
+            String[] split = content.split("\n");
+            for (String item : split) {
+                map.put(item, index);
+                index += 1;
+            }
+        } catch (Exception e) {
+            System.err.println("read errors :" + e);
+        }
+        return map;
+    }
+
     private Map<String, Integer> load(String filePath){
         Map<String, Integer> map = new HashMap<String, Integer>();
 
