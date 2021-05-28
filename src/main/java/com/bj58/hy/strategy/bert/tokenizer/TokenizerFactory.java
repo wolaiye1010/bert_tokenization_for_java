@@ -1,7 +1,5 @@
 package com.bj58.hy.strategy.bert.tokenizer;
 
-import java.io.File;
-
 /**
  * Created by zhudongchang on 2021/5/28 10:45 上午
  */
