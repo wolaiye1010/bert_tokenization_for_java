@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Created by zhudongchang on 2021/5/28 10:41 上午
  */
-class TokenEntity {
+public class TokenEntity {
     private List<Integer> inputIds;
     private List<Integer> inputMask;
     private List<Integer> segmentIds;
