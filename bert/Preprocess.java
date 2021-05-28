@@ -10,7 +10,7 @@ public class Preprocess {
     private final static int maxSeqLength = 64;  // 放到配置文件中去读
 
     public Preprocess(){
-        this.vocab = load("/Users/zb/code/my_github/bert_tokenization_for_java/vocab.txt");
+        this.vocab = load("/Users/zhudongchang/WorkData/project/huangye_project/58huangye/huangye/branches/web/bert_tokenization_for_java/vocab.txt");
         this.fullTokenizer = new FullTokenizer(this.vocab);
     }
 
