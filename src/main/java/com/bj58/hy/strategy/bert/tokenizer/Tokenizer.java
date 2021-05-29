@@ -135,7 +135,6 @@ public class Tokenizer {
     }
 
     public TokenEntity encode(String query){
-        query = full2HalfChange(query).toLowerCase();
         List<String> tokensQuery = fullTokenizer.tokenize(query);
         return getExampleSingle(tokensQuery);
     }

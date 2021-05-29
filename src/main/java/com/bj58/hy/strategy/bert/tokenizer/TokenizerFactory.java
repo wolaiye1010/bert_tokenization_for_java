@@ -59,19 +59,17 @@ public class TokenizerFactory {
         }
 
         public static void main(String[] args) {
-            String path="/Users/zhudongchang/WorkData/project/huangye_project/58huangye/huangye/branches/web/bert_tokenization_for_java/vocab.txt";
-            Tokenizer tokenizer = TokenizerFactory.builder().setPath(path).setMaxLength(100).getTokenizer();
-            String query = "您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？您也可以留一下邮箱的，QQ邮箱也是可以的。？";
-            TokenEntity e = tokenizer.encode(query);
-            System.out.println("input_ids " + e.getInputIds());
-            System.out.println("input_mask " + e.getInputMask());
-            System.out.println("segment_ids " + e.getSegmentIds());
+//            Tokenizer tokenizer = TokenizerFactory.builder().setPath(path).setMaxLength(100).getTokenizer();
+//            TokenEntity e = tokenizer.encode(query);
+//            System.out.println("input_ids " + e.getInputIds());
+//            System.out.println("input_mask " + e.getInputMask());
+//            System.out.println("segment_ids " + e.getSegmentIds());
 
-
+            String path="/Users/zhudongchang/Downloads/vocab.txt";
+            String query = "非常满意。阿姨来得很早，打扫也非常干净，边边角角都照顾到了";
             Tokenizer tokenizerContent = TokenizerFactory.builder().setContent(FileUtils.fileGetContent(path)).setMaxLength(100).getTokenizer();
             TokenEntity encode = tokenizerContent.encode(query);
             System.out.println("input_ids " + encode.getInputIds());
-            System.out.println("input_mask " + encode.getInputMask());
             System.out.println("segment_ids " + encode.getSegmentIds());
         }
     }
